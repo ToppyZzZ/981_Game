@@ -1,5 +1,6 @@
 ﻿using Unity.FPS.Game;
 using UnityEngine;
+using UnityEngine.Playables; // สำหรับ Timeline
 
 namespace Unity.FPS.Gameplay
 {
@@ -13,6 +14,9 @@ namespace Unity.FPS.Gameplay
 
         [Tooltip("Start sending notification about remaining enemies when this amount of enemies is left")]
         public int NotificationEnemiesRemainingThreshold = 3;
+
+        [Tooltip("Timeline ที่จะเล่นเมื่อกำจัดศัตรูครบ")]
+        public PlayableDirector timelineDirector;  // ✅ Timeline
 
         int m_KillTotal;
 
@@ -46,12 +50,18 @@ namespace Unity.FPS.Gameplay
             // update the objective text according to how many enemies remain to kill
             if (targetRemaining == 0)
             {
-                CompleteObjective(string.Empty, GetUpdatedCounterAmount(), "Objective complete : " + Title);
-            }
-            else if (targetRemaining == 1)
-            {
+                //timelineDirector.Play(); 
                 string notificationText = NotificationEnemiesRemainingThreshold >= targetRemaining
-                    ? "One enemy left"
+                    ? "Objective complete"
+                    : string.Empty;
+                UpdateObjective(string.Empty, GetUpdatedCounterAmount(), notificationText);
+            }
+
+            else if (targetRemaining == 25)
+            {
+                timelineDirector.Play();
+                string notificationText = NotificationEnemiesRemainingThreshold >= targetRemaining
+                    ? "Go Figthing Boss!!!!!"
                     : string.Empty;
                 UpdateObjective(string.Empty, GetUpdatedCounterAmount(), notificationText);
             }
@@ -64,6 +74,8 @@ namespace Unity.FPS.Gameplay
 
                 UpdateObjective(string.Empty, GetUpdatedCounterAmount(), notificationText);
             }
+
+           
         }
 
         string GetUpdatedCounterAmount()
